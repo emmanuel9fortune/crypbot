@@ -1,9 +1,21 @@
 const { Telegraf, Markup } = require('telegraf');
 const axios = require('axios');
+const express = require('express');
+const app = express()
+
+app.get('/', (req, res)=>{
+    res.send('running')
+})
+
+app.listen(3000, ()=>{
+    console.log('running');
+})
 
 const bot = new Telegraf("7836633245:AAH5ZaFnLEgw41DDfRdk06oDwUJ5xXBoAKc");
 
 const numft = new Intl.NumberFormat('en-us')
+
+
 
 bot.start((ctx) => {
     ctx.reply(

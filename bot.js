@@ -10,53 +10,32 @@ app.get('/', (req, res) => {
 
 const bot = new Telegraf("7836633245:AAH5ZaFnLEgw41DDfRdk06oDwUJ5xXBoAKc"); // Use an environment variable for your bot token
 
-const numft = new Intl.NumberFormat('en-us');
-
 // Handle '/start' command
 bot.start((ctx) => {
     ctx.reply(
-        'Welcome! Click to view current prices.',
-        Markup.inlineKeyboard([
-            Markup.button.callback('Bitcoin', 'btc'),
-            Markup.button.callback('Ethereum', 'eth'),
-            Markup.button.callback('Litecoin', 'ltc')
-        ])
+        'Welcome! Enter contact address.',
     );
 });
 
 // Fetch Bitcoin price
-bot.action('btc', async (ctx) => {
-    const url = `https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd`;
+bot.on('text', async (ctx) => {
+    const response = await axios.get(`https://api.coingecko.com/api/v3/coins/ethereum/contract/${ctx.message.text}`);
     try {
-        const response = await axios.get(url);
-        const price = response.data['bitcoin'].usd;
-        await ctx.reply(`$${numft.format(price)}`);
+        const data = response.data;
+        const name = data.name;
+        const symbol = data.symbol.toUpperCase();
+        const currentPrice = data.market_data.current_price.usd;
+        const marketCap = data.market_data.market_cap.usd;
+        const totalSupply = data.market_data.total_supply;
+        await ctx.reply(`
+            name : ${name}
+            symbol : ${symbol}
+            price : ${currentPrice}
+            marketCap : ${marketCap}
+            totalSupply : ${totalSupply}
+        `);
     } catch (error) {
         await ctx.reply('Error fetching Bitcoin price.');
-    }
-});
-
-// Fetch Ethereum price
-bot.action('eth', async (ctx) => {
-    const url = `https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd`;
-    try {
-        const response = await axios.get(url);
-        const price = response.data['ethereum'].usd;
-        await ctx.reply(`$${numft.format(price)}`);
-    } catch (error) {
-        await ctx.reply('Error fetching Ethereum price.');
-    }
-});
-
-// Fetch Litecoin price
-bot.action('ltc', async (ctx) => {
-    const url = `https://api.coingecko.com/api/v3/simple/price?ids=litecoin&vs_currencies=usd`;
-    try {
-        const response = await axios.get(url);
-        const price = response.data['litecoin'].usd;
-        await ctx.reply(`$${numft.format(price)}`);
-    } catch (error) {
-        await ctx.reply('Error fetching Litecoin price.');
     }
 });
 

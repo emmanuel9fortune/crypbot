@@ -8,7 +8,7 @@ app.get('/', (req, res) => {
     res.send('running');
 });
 
-const bot = new Telegraf(process.env.BOT_TOKEN); // Use an environment variable for your bot token
+const bot = new Telegraf("7836633245:AAH5ZaFnLEgw41DDfRdk06oDwUJ5xXBoAKc"); // Use an environment variable for your bot token
 
 const numft = new Intl.NumberFormat('en-us');
 

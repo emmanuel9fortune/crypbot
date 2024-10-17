@@ -19,33 +19,25 @@ bot.start((ctx) => {
 
 // Fetch Bitcoin price
 bot.on('text', async (ctx) => {
-    const contractAddress = ctx.message.text;
-
+    const response = await axios.get(`https://api.coingecko.com/api/v3/coins/ethereum/contract/${ctx.message.text}`);
     try {
-        const response = await axios.get(`https://api.coingecko.com/api/v3/coins/ethereum/contract/${contractAddress}`);
         const data = response.data;
         const name = data.name;
         const symbol = data.symbol.toUpperCase();
         const currentPrice = data.market_data.current_price.usd;
         const marketCap = data.market_data.market_cap.usd;
         const totalSupply = data.market_data.total_supply;
-        const imageUrl = data.image.large || data.image.small; // Use large or small image if available
-
-        // Send token details and image
-        await ctx.replyWithPhoto(imageUrl, {
-            caption: `
-                Name: ${name}
-                Symbol: ${symbol}
-                Price: $${currentPrice}
-                Market Cap: $${marketCap}
-                Total Supply: ${totalSupply}
-            `
-        });
+        await ctx.reply(`
+            name : ${name}
+            symbol : ${symbol}
+            price : ${currentPrice}
+            marketCap : ${marketCap}
+            totalSupply : ${totalSupply}
+        `);
     } catch (error) {
-        await ctx.reply('Error fetching token details. Please make sure the contract address is valid.');
+        await ctx.reply('Error fetching Bitcoin price.');
     }
 });
-
 
 // Start the bot
 bot.launch()
